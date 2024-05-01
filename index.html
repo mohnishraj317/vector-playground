@@ -27,10 +27,29 @@
       top: 0;
       left: 0;
     }
+    
+    .vec-visibility {
+      padding: .5rem;
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: white;
+      border-radius: .2rem;
+      z-index: 2;
+      display: flex;
+      gap: .2rem;
+      align-items: center;
+      font-family: monospace;
+    }
   </style>
 </head>
 
 <body>
+  <div class="vec-visibility">
+    <label for="vec-vis">Show Vectors</label>
+    <input type="checkbox" checked="true" name="vec-vis" id="vec-vis" />
+  </div>
+  
   <canvas class="cnv"></canvas>
 </body>
 

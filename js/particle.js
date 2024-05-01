@@ -1,9 +1,9 @@
 class Particle {
   constructor(x, y, size, color) {
-    this.x = x;
-    this.y = y;
     this.size = size;
     this.color = color;
+    this.mass = 1;
+    this._vecVisibility = true;
 
     this.position = new Vector(x, y);
     this.basePosition = new Vector(x, y);
@@ -12,14 +12,17 @@ class Particle {
 
     this.mouse = new Vector();
     this.damp = new Vector();
+    this.baseForce = new Vector();
     
     this.b = 2;
+    this.k = .2;
 
     this._fls = [
       new VectorFL(this.velocity, [0, 0], "red"),
       new VectorFL(this.acceleration, [0, 0], "lime"),
       new VectorFL(this.mouse, [0, 0], "blue"),
-      new VectorFL(this.damp, [0, 0], "hotpink")
+      new VectorFL(this.damp, [0, 0], "hotpink"),
+      new VectorFL(this.baseForce, [0, 0], "yellow"),
     ];
 
     this._fls.forEach(fl => fl.scale = 10);
@@ -31,8 +34,6 @@ class Particle {
     ctx.strokeStyle = this.color;
     ctx.arc(this.position.x, this.position.y, this.size, 0, Math.PI*2);
     ctx.stroke();
-    // ctx.fillStyle = this.color;
-    // ctx.fillRect(this.position.x - this.size / 2, this.position.y - this.size / 2, this.size, this.size);
     ctx.restore();
   }
   
@@ -51,13 +52,17 @@ class Particle {
     
     this.damp.x = -this.b*this.velocity.x;
     this.damp.y = -this.b*this.velocity.y;
+    
+    this.baseForce.x = this.k*(this.basePosition.x - this.position.x);
+    this.baseForce.y = this.k*(this.basePosition.y - this.position.y);
 
     const extForces = [
       this.mouse,
-      this.damp
+      this.damp,
+      this.baseForce
     ];
 
-    extForces.forEach(f => this.acceleration.addBy(f));
+    extForces.forEach(f => this.acceleration.addBy(f) / this.mass);
     this.acceleration.cap(.05);
 
     this._updateVectorFLs();
@@ -86,6 +91,7 @@ class Effect {
     this.particleSize = ~~(this.cnv.width / 60);
     this.mouse = mouse;
     this.currAnim = null;
+    this._vecVis = true;
   }
   
   start() {
@@ -108,7 +114,7 @@ class Effect {
       particle.update(this.ctx);
     });
 
-    this.showVectorField(this.cnv.getContext("2d"));
+    if (this._vecVis) this.showVectorField(this.cnv.getContext("2d"));
   }
 
   showVectorField(ctx) {

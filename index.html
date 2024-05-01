@@ -18,7 +18,8 @@
     }
     
     html, body {
-      overscroll-behavior: none
+      overscroll-behavior: none;
+      overflow: hidden;
     }
     
     .cnv {
@@ -26,38 +27,10 @@
       top: 0;
       left: 0;
     }
-
-    /*
-    .upload-btn {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      padding: 1rem;
-      border: 0;
-      outline: none;
-      background: crimson;
-      color: white;
-      z-index: 2;
-      cursor: pointer;
-      border-radius: .2rem;
-      transition: 300ms;
-    }
-
-    .upload-btn:hover {
-      scale: 1.1;
-      filter: brightness(1.5);
-    }
-
-    .upload-btn:active {
-      scale: .9;
-      filter: brightness(.9);
-    } */
   </style>
 </head>
 
 <body>
-  <!-- <label for="image-upload" class="upload-btn">Upload</label>
-  <input class="image-input" style="display: none" type="file" name="image-upload" id="image-upload"> -->
   <canvas class="cnv"></canvas>
 </body>
 

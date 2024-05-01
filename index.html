@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <script src="js/utils.js" defer></script>
+  <script src="js/vector2D.js" defer></script>
+  <script src="js/particle.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/script.js" defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      overscroll-behavior: none
+    }
+    
+    .cnv {
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    /*
+    .upload-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 1rem;
+      border: 0;
+      outline: none;
+      background: crimson;
+      color: white;
+      z-index: 2;
+      cursor: pointer;
+      border-radius: .2rem;
+      transition: 300ms;
+    }
+
+    .upload-btn:hover {
+      scale: 1.1;
+      filter: brightness(1.5);
+    }
+
+    .upload-btn:active {
+      scale: .9;
+      filter: brightness(.9);
+    } */
+  </style>
+</head>
+
+<body>
+  <!-- <label for="image-upload" class="upload-btn">Upload</label>
+  <input class="image-input" style="display: none" type="file" name="image-upload" id="image-upload"> -->
+  <canvas class="cnv"></canvas>
+</body>
+
+</html>

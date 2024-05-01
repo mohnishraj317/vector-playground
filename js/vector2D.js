@@ -21,11 +21,15 @@ class Vector {
       this.x = mag*Math.cos(this.angle);
       this.y = mag*Math.sin(this.angle);
     }
+    
+    return this;
   }
 
   addBy(vec) {
     this.x += vec.x;
     this.y += vec.y;
+    
+    return this;
   }
 
   dotProd(vec) {

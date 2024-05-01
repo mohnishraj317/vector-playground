@@ -15,7 +15,7 @@ addEventListener("load", () => {
   
   const originVec = new Vector(...origin);
   
-  p2.mass = Infinity;
+  p2.mass = 5;
   
   p2.position.addBy(originVec);
   p2.basePosition.addBy(originVec);

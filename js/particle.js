@@ -62,7 +62,7 @@ class Particle {
       this.baseForce
     ];
 
-    extForces.forEach(f => this.acceleration.addBy(f) / this.mass);
+    extForces.forEach(f => this.acceleration.addBy(f.cap(f.mag / that.mass)));
     this.acceleration.cap(.05);
 
     this._updateVectorFLs();

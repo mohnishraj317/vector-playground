@@ -11,11 +11,15 @@ class Particle {
     this.acceleration = new Vector();
 
     this.mouse = new Vector();
+    this.damp = new Vector();
+    
+    this.b = 2;
 
     this._fls = [
       new VectorFL(this.velocity, [0, 0], "red"),
       new VectorFL(this.acceleration, [0, 0], "lime"),
-      new VectorFL(this.mouse, [0, 0], "blue")
+      new VectorFL(this.mouse, [0, 0], "blue"),
+      new VectorFL(this.damp, [0, 0], "hotpink")
     ];
 
     this._fls.forEach(fl => fl.scale = 10);
@@ -35,9 +39,7 @@ class Particle {
   update(ctx) {
     const { cos, sin, atan, atan2 } = Math;
     const that = this;
-
-    const md = this.dist(this.system.mouse);
-
+    
     this.mouse.x = (this.system.mouse.x - this.position.x) / 10;
     this.mouse.y = (this.system.mouse.y - this.position.y) / 10;
 
@@ -46,9 +48,13 @@ class Particle {
 
     this.position.addBy(this.velocity);
     this.velocity.addBy(this.acceleration);
+    
+    this.damp.x = -this.b*this.velocity.x;
+    this.damp.y = -this.b*this.velocity.y;
 
     const extForces = [
-      that.mouse
+      this.mouse,
+      this.damp
     ];
 
     extForces.forEach(f => this.acceleration.addBy(f));

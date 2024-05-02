@@ -2,8 +2,7 @@ class Particle {
   constructor(x, y, size, color) {
     this.size = size;
     this.color = color;
-    this.mass = 1;
-    this._vecVisibility = true;
+    this.mass = innerHeight * 100;
 
     this.position = new Vector(x, y);
     this.basePosition = new Vector(x, y);
@@ -14,8 +13,8 @@ class Particle {
     this.damp = new Vector();
     this.baseForce = new Vector();
     
-    this.b = 2;
-    this.k = .2;
+    this.b = 2e1;
+    this.k = 1/10;
 
     this._fls = [
       new VectorFL(this.velocity, [0, 0], "red"),
@@ -41,29 +40,33 @@ class Particle {
     const { cos, sin, atan, atan2 } = Math;
     const that = this;
     
-    this.mouse.x = (this.system.mouse.x - this.position.x) / 10;
-    this.mouse.y = (this.system.mouse.y - this.position.y) / 10;
+    this.mouse.x = (this.system.mouse.x - this.position.x);
+    this.mouse.y = (this.system.mouse.y - this.position.y);
 
     this.mouse.x ||= 0;
     this.mouse.y ||= 0;
+    
+    this.mouse.cap(2);
 
-    this.position.addBy(this.velocity);
     this.velocity.addBy(this.acceleration);
+    this.position.addBy(this.velocity);
     
     this.damp.x = -this.b*this.velocity.x;
     this.damp.y = -this.b*this.velocity.y;
     
     this.baseForce.x = this.k*(this.basePosition.x - this.position.x);
     this.baseForce.y = this.k*(this.basePosition.y - this.position.y);
-
+    
     const extForces = [
       this.mouse,
       this.damp,
       this.baseForce
     ];
 
-    extForces.forEach(f => this.acceleration.addBy(f.cap(f.mag / that.mass)));
-    this.acceleration.cap(.05);
+    extForces.forEach(f => {
+      this.acceleration.x += f.x / that.mass;
+      this.acceleration.y += f.y / that.mass;
+    });
 
     this._updateVectorFLs();
     this.draw(ctx);

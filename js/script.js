@@ -15,7 +15,7 @@ addEventListener("load", () => {
   
   const originVec = new Vector(...origin);
   
-  p2.mass = 5;
+  p2.mass = p1.mass * 5;
   
   p2.position.addBy(originVec);
   p2.basePosition.addBy(originVec);
@@ -26,8 +26,8 @@ addEventListener("load", () => {
   p1.velocity.x = 1;
   p1.velocity.y = 2;
 
-  p1.acceleration.x = -.01;
-  p1.acceleration.y = -.02;
+  // p1.acceleration.x = -.01;
+  // p1.acceleration.y = -.02;
 });
 
 document.querySelector("#vec-vis")

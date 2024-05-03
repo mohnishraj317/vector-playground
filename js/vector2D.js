@@ -35,14 +35,25 @@ class Vector {
   dotProd(vec) {
     return this.x * vec.x + this.y * vec.y;
   }
+  
+  scale(scaler) {
+    this.x *= scaler;
+    this.y *= scaler;
+    return this;
+  }
+  
+  assign(vec) {
+    this.x = vec.x;
+    this.y = vec.y;
+  }
 }
 
 class VectorFL {
-  constructor(vec, origin, color) {
+  constructor(vec, origin, color, scale) {
     this.vec = vec;
     this.origin = origin;
     this.color = color;
-    this.scale = 1;
+    this.scale = scale;
 
     VectorFL.pool.push(this);
   }

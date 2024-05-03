@@ -14,7 +14,7 @@ class Particle {
     this.baseForce = new Vector();
     
     this.b = 2e3;
-    this.k = 50;
+    this.k = 100;
 
     this._fls = [
       new VectorFL(this.velocity, [0, 0], "red", 10),
@@ -23,8 +23,6 @@ class Particle {
       new VectorFL(this.damp, [0, 0], "hotpink", .1),
       new VectorFL(this.baseForce, [0, 0], "yellow", .1),
     ];
-
-    // this._fls.forEach(fl => fl.scale = 10);
   }
   
   draw(ctx) {
@@ -47,7 +45,6 @@ class Particle {
     this.mouse.y ||= 0;
     
     this.mouse.scale(10);
-    // this.mouse.cap(2);
     
     this.damp.x = -this.b*this.velocity.x;
     this.damp.y = -this.b*this.velocity.y;
@@ -61,11 +58,13 @@ class Particle {
       this.baseForce
     ];
 
-    this.acceleration.assign(extForces.reduce((a, b) => a.add(b), new Vector()).scale(1/this.mass));
+    this.acceleration
+      .assign(extForces.reduce((a, b) => a.add(b), new Vector()).scale(1/this.mass));
 
     this._updateVectorFLs();
     this.position.addBy(this.velocity);
-    this.velocity.addBy(this.acceleration);
+    this.velocity.addBy(this.acceleration)
+        // .cap(Particle.MAX_VELOCITY);
     this.draw(ctx);
   }
 
@@ -79,6 +78,8 @@ class Particle {
   dist(obj) {
     return Math.hypot(this.x - obj.x, this.y - obj.y);
   }
+  
+  static MAX_VELOCITY = 10;
 
   static create = (...args) => new Particle(...args);
 }

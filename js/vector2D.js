@@ -45,6 +45,7 @@ class Vector {
   assign(vec) {
     this.x = vec.x;
     this.y = vec.y;
+    return this;
   }
 }
 

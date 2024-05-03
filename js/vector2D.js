@@ -47,6 +47,20 @@ class Vector {
     this.y = vec.y;
     return this;
   }
+  
+  copy() {
+    return new Vector(this.x, this.y);
+  }
+  
+  setMag(mag) {
+    const x = mag*Math.cos(this.angle);
+    const y = mag*Math.sin(this.angle);
+    
+    this.x = x;
+    this.y = y;
+    
+    return this;
+  }
 }
 
 class VectorFL {
@@ -82,6 +96,11 @@ class VectorFL {
     ctx.strokeStyle = this.color;
     ctx.stroke();
     ctx.restore();
+  }
+  
+  remove() {
+    const i = VectorFL.pool.findIndex(v => v === this);
+    VectorFL.pool.splice(i, 1);
   }
 
   static pool = [];

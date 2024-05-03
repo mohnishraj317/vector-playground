@@ -3,6 +3,10 @@ class Particle {
     this.size = size;
     this.color = color;
     this.mass = innerHeight * 100;
+    
+    this.bullets = [];
+    this.lastShootTime = 0;
+    this.shootInterval = 1/2;
 
     this.position = new Vector(x, y);
     this.basePosition = new Vector(x, y);
@@ -11,17 +15,14 @@ class Particle {
 
     this.mouse = new Vector();
     this.damp = new Vector();
-    this.baseForce = new Vector();
     
-    this.b = 2e3;
-    this.k = 100;
+    this.b = 5e2;
 
     this._fls = [
-      new VectorFL(this.velocity, [0, 0], "red", 10),
-      new VectorFL(this.acceleration, [0, 0], "lime", 1e3),
-      new VectorFL(this.mouse, [0, 0], "blue", .1),
-      new VectorFL(this.damp, [0, 0], "hotpink", .1),
-      new VectorFL(this.baseForce, [0, 0], "yellow", .1),
+      new VectorFL(this.velocity, [0, 0], "yellow", 10),
+      new VectorFL(this.acceleration, [0, 0], "lime", 500),
+      new VectorFL(this.mouse, [0, 0], "blue", .01),
+      new VectorFL(this.damp, [0, 0], "hotpink", .01),
     ];
   }
   
@@ -43,19 +44,16 @@ class Particle {
 
     this.mouse.x ||= 0;
     this.mouse.y ||= 0;
-    
-    this.mouse.scale(10);
+
+    this.mouse.setMag(this.mouse.mag**2);
+    this.mouse.scale(.3);
     
     this.damp.x = -this.b*this.velocity.x;
     this.damp.y = -this.b*this.velocity.y;
     
-    this.baseForce.x = this.k*(this.basePosition.x - this.position.x);
-    this.baseForce.y = this.k*(this.basePosition.y - this.position.y);
-    
     const extForces = [
       this.mouse,
       this.damp,
-      this.baseForce
     ];
 
     this.acceleration
@@ -64,8 +62,17 @@ class Particle {
     this._updateVectorFLs();
     this.position.addBy(this.velocity);
     this.velocity.addBy(this.acceleration)
-        // .cap(Particle.MAX_VELOCITY);
+        .cap(Particle.MAX_VELOCITY);
     this.draw(ctx);
+    
+    if (this.lastShootTime >= this.shootInterval) {
+      this.lastShootTime = 0;
+      this.shoot(
+        this.system.mouse.x || this.system.lastMouse.x,
+        this.system.mouse.y || this.system.lastMouse.y);
+    } else {
+      this.lastShootTime++;
+    }
   }
 
   _updateVectorFLs() {
@@ -79,9 +86,72 @@ class Particle {
     return Math.hypot(this.x - obj.x, this.y - obj.y);
   }
   
-  static MAX_VELOCITY = 10;
+  shoot(x, y) {
+    const bullet = new Bullet(
+      this.position.copy(),
+      new Vector(x, y).addBy(this.position.copy().scale(-1)).setMag(3),
+      this.color
+    );
+    bullet.parent = this;
+    this.bullets.push(bullet);
+  }
+  
+  static MAX_VELOCITY = 20;
 
   static create = (...args) => new Particle(...args);
+}
+
+class Bullet {
+  constructor(position, velocity, color) {
+    this.position = position;
+    this.velocity = velocity;
+    this.acceleration = new Vector();
+    
+    this.size = 2;
+    this.color = color;
+    
+    this._fls = [
+      new VectorFL(this.velocity, [0, 0], "red", 10),
+    ];
+  }
+  
+  draw(ctx) {
+    const mag = this.velocity.mag*10;
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = this.color;
+    ctx.arc(this.position.x, this.position.y, this.size, 0, Math.PI * 2);
+    ctx.moveTo(this.position.x, this.position.y)
+    ctx.lineTo(
+      this.position.x + mag*Math.cos(this.velocity.angle),
+      this.position.y + mag*Math.sin(this.velocity.angle)
+    );
+    ctx.stroke();
+    ctx.restore();
+  }
+  
+  update(ctx) {
+    const { cos, sin, atan, atan2 } = Math;
+    const that = this;
+    
+    this._updateVectorFLs();
+    this.position.addBy(this.velocity);
+    this.draw(ctx);
+  }
+  
+  remove() {
+    const i = this.parent.bullets.findIndex(b => b === this);
+    this.parent.bullets.splice(i, 1);
+    
+    this._fls.forEach(fl => fl.remove());
+  }
+  
+  _updateVectorFLs() {
+    this._fls.forEach(vec => {
+      vec.origin[0] = this.position.x;
+      vec.origin[1] = this.position.y;
+    });
+  }
 }
 
 class Effect {
@@ -91,6 +161,7 @@ class Effect {
     this.particles = [];
     this.particleSize = ~~(this.cnv.width / 60);
     this.mouse = mouse;
+    this.lastMouse = {...mouse};
     this.currAnim = null;
     this._vecVis = true;
   }
@@ -111,8 +182,20 @@ class Effect {
     this.currAnim = requestAnimationFrame(that.animate.bind(that));
     fillCtx(this.cnv, "#000");
     
+    this.lastMouse.x = this.mouse.x || this.lastMouse.x;
+    this.lastMouse.y = this.mouse.y || this.lastMouse.y;
+
     this.particles.forEach(particle => {
       particle.update(this.ctx);
+      
+      particle.bullets.forEach(bullet => {
+        bullet.update(this.ctx);
+      
+        if (
+          (bullet.position.x < 0 || bullet.position.x > this.cnv.width) ||
+          (bullet.position.y < 0 || bullet.position.y > this.cnv.height)
+        ) bullet.remove();
+      })
     });
 
     if (this._vecVis) this.showVectorField(this.cnv.getContext("2d"));

@@ -1,6 +1,6 @@
 const globalMouse = {
   x: undefined,
-  y: undefined
+  y: undefined,
 };
 
 const cnv = document.querySelector(".cnv");

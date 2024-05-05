@@ -6,7 +6,7 @@ class Particle {
     
     this.bullets = [];
     this.lastShootTime = 0;
-    this.shootInterval = 1/2;
+    this.shootInterval = 1;
 
     this.position = new Vector(x, y);
     this.basePosition = new Vector(x, y);
@@ -89,7 +89,7 @@ class Particle {
   shoot(x, y) {
     const bullet = new Bullet(
       this.position.copy(),
-      new Vector(x, y).addBy(this.position.copy().scale(-1)).setMag(3),
+      new Vector(x, y).addBy(this.position.copy().scale(-1)).setMag(10),
       this.color
     );
     bullet.parent = this;
@@ -106,12 +106,17 @@ class Bullet {
     this.position = position;
     this.velocity = velocity;
     this.acceleration = new Vector();
+    this.gravity = new Vector();
+    this.damp = new Vector();
     
+    this.mass = innerHeight / 10;
     this.size = 2;
     this.color = color;
     
     this._fls = [
       new VectorFL(this.velocity, [0, 0], "red", 10),
+      new VectorFL(this.gravity, [0, 0], "yellow", 10),
+      new VectorFL(this.damp, [0, 0], "lime", 10),
     ];
   }
   
@@ -134,7 +139,24 @@ class Bullet {
     const { cos, sin, atan, atan2 } = Math;
     const that = this;
     
+    const G = 1/2;
+    const ms = this.mass * 100;
+    this.gravity.y = G*ms*this.mass / (this.parent.system.cnv.height - this.position.y)**2;
+    
+    const b = 1;
+    this.damp.x = -b*this.velocity.x;
+    this.damp.y = -b*this.velocity.y;
+    
+    const extForces = [
+      this.gravity,
+      this.damp
+    ];
+  
+    this.acceleration
+      .assign(extForces.reduce((a, b) => a.add(b), new Vector()).scale(1/this.mass));
+
     this._updateVectorFLs();
+    this.velocity.addBy(this.acceleration);
     this.position.addBy(this.velocity);
     this.draw(ctx);
   }

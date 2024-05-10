@@ -6,7 +6,7 @@ class Particle {
     
     this.bullets = [];
     this.lastShootTime = 0;
-    this.shootInterval = 1;
+    this.shootInterval = 60;
 
     this.position = new Vector(x, y);
     this.basePosition = new Vector(x, y);
@@ -165,6 +165,8 @@ class Bullet {
   remove() {
     const i = this.parent.bullets.findIndex(b => b === this);
     this.parent.bullets.splice(i, 1);
+    
+    new Explosion(this.position.copy(), 10, this.parent.system)
     
     this._fls.forEach(fl => fl.remove());
   }

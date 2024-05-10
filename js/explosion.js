@@ -87,10 +87,10 @@ class Explosion {
         const ctx = that.effect.ctx;
 
         this._fls.forEach(fl => fl.remove());
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.baseSize*2, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
-        ctx.fill();
+        // ctx.beginPath();
+        // ctx.arc(this.position.x, this.position.y, this.baseSize*2, 0, Math.PI * 2);
+        // ctx.fillStyle = "#fff";
+        // ctx.fill();
         that.particles.splice(i, 1);
       }
     }

@@ -26,7 +26,7 @@ class Effect {
   animate(timestamp) {
     const that = this;
     this.currAnim = requestAnimationFrame(that.animate.bind(that));
-    fillCtx(this.cnv, "#0002");
+    fillCtx(this.cnv, "#000");
 
     this.lastMouse.x = this.mouse.x || this.lastMouse.x;
     this.lastMouse.y = this.mouse.y || this.lastMouse.y;
@@ -38,9 +38,10 @@ class Effect {
         bullet.update(this.ctx);
 
         if (
-          (bullet.position.x < 0 || bullet.position.x > this.cnv.width) ||
-          (bullet.position.y < 0 || bullet.position.y > this.cnv.height)
-        ) bullet.remove();
+          (bullet.position.x <= 0 || bullet.position.x >= this.cnv.width) ||
+          (bullet.position.y <= 0 || bullet.position.y >= this.cnv.height)
+        )
+          bullet.remove();
       })
     });
     

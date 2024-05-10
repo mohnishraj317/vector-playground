@@ -64,7 +64,7 @@ class Vector {
 }
 
 class VectorFL {
-  constructor(vec, origin, color, scale) {
+  constructor(vec, origin, color, scale=1) {
     this.vec = vec;
     this.origin = origin;
     this.color = color;

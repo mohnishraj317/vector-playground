@@ -62,7 +62,7 @@ class Particle {
     this._updateVectorFLs();
     this.position.addBy(this.velocity);
     this.velocity.addBy(this.acceleration)
-        .cap(Particle.MAX_VELOCITY);
+        // .cap(Particle.MAX_VELOCITY);
     this.draw(ctx);
     
     if (this.lastShootTime >= this.shootInterval) {

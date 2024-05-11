@@ -97,7 +97,7 @@ class Particle {
     const bullet = new Bullet(
       this.position.copy(),
       new Vector(x, y).addBy(this.position.copy().scale(-1)).setMag(10),
-      "cyan"
+      "#FFA500"
     );
     bullet.parent = this;
     this.bullets.push(bullet);

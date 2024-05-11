@@ -19,6 +19,14 @@ class Explosion {
       this.particles.push(particle);
     }
   }
+  
+  static COLORS = [
+      "#FF0000",
+      "#FFA500",
+      "#FFFF00",
+      "#FFFFFF",
+      "#00FFFF"
+    ]
 
   createParticle(i) {
     const that = this;
@@ -29,7 +37,7 @@ class Explosion {
       size: that.size,
       baseSize: that.size,
       decayRate: that.size / 50,
-      color: that.color,
+      color: Explosion.COLORS[~~((Explosion.COLORS.length - 1) * Math.random())],
       velocity: new Vector(speed * Math.cos(i), speed * Math.sin(i)),
       parent: that,
       mass: innerHeight,

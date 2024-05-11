@@ -6,7 +6,9 @@ class Particle {
     
     this.bullets = [];
     this.lastShootTime = 0;
-    this.shootInterval = 60;
+    this.shootInterval = 1;
+    
+    // setTimeout(() => cancelAnimationFrame(this.system.currAnim), 4000);
 
     this.position = new Vector(x, y);
     this.basePosition = new Vector(x, y);
@@ -15,10 +17,12 @@ class Particle {
 
     this.mouse = new Vector();
     this.damp = new Vector();
+    this.gunDir = new Vector();
     
     this.b = 5e2;
 
     this._fls = [
+      // new VectorFL(this.gunDir, [0, 0], "cyan", 10),
       new VectorFL(this.velocity, [0, 0], "yellow", 10),
       new VectorFL(this.acceleration, [0, 0], "lime", 500),
       new VectorFL(this.mouse, [0, 0], "blue", .01),
@@ -48,6 +52,9 @@ class Particle {
     this.mouse.setMag(this.mouse.mag**2);
     this.mouse.scale(.3);
     
+    this.gunDir.x = (this.system.mouse.x || this.system.lastMouse.x) - this.position.x;
+    this.gunDir.y = (this.system.mouse.y || this.system.lastMouse.y) - this.position.y;
+    
     this.damp.x = -this.b*this.velocity.x;
     this.damp.y = -this.b*this.velocity.y;
     
@@ -59,10 +66,10 @@ class Particle {
     this.acceleration
       .assign(extForces.reduce((a, b) => a.add(b), new Vector()).scale(1/this.mass));
 
-    this._updateVectorFLs();
     this.position.addBy(this.velocity);
     this.velocity.addBy(this.acceleration)
         // .cap(Particle.MAX_VELOCITY);
+    this._updateVectorFLs();
     this.draw(ctx);
     
     if (this.lastShootTime >= this.shootInterval) {
@@ -90,7 +97,7 @@ class Particle {
     const bullet = new Bullet(
       this.position.copy(),
       new Vector(x, y).addBy(this.position.copy().scale(-1)).setMag(10),
-      this.color
+      "cyan"
     );
     bullet.parent = this;
     this.bullets.push(bullet);
@@ -139,9 +146,11 @@ class Bullet {
     const { cos, sin, atan, atan2 } = Math;
     const that = this;
     
-    const G = 1/2;
-    const ms = this.mass * 100;
-    this.gravity.y = G*ms*this.mass / (this.parent.system.cnv.height - this.position.y)**2;
+    const G = 5;
+    const ms = this.mass * 50;
+    const R = this.parent.system.cnv.height / 3;
+    const r = this.parent.system.cnv.height - this.position.y;
+    this.gravity.y = G*ms*this.mass / (r + R)**2;
     
     const b = 1;
     this.damp.x = -b*this.velocity.x;

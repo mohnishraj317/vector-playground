@@ -1,13 +1,13 @@
 class Effect {
   constructor(cnv, mouse) {
     this.cnv = cnv;
-    this.ctx = cnv.getContext("2d")
+    this.ctx = cnv.getContext("2d");
     this.particles = [];
     this.particleSize = ~~(this.cnv.width / 60);
     this.explosions = [];
     this.explosionSize = 2;
     this.mouse = mouse;
-    this.lastMouse = { ...mouse };
+    this.lastMouse = { x: mouse.x || 0, y: mouse.y || 0 };
     this.currAnim = null;
     this._vecVis = true;
   }
@@ -47,6 +47,13 @@ class Effect {
     
     this.explosions.forEach(explosion => {
       explosion.update(this.ctx);
+      const del = 10;
+      
+      if (
+        (explosion.position.x <= -del || explosion.position.x >= this.cnv.width + del) ||
+        (explosion.position.y <= -del || explosion.position.y >= this.cnv.height + del)
+      )
+        explosion.remove();
     });
 
     if (this._vecVis) this.showVectorField(this.cnv.getContext("2d"));

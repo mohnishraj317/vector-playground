@@ -1,5 +1,5 @@
 class Explosion {
-  constructor(posi, n, effect, size = 5, color = "cyan") {
+  constructor(posi, n, effect, size = 5, color = "#0ffd") {
     this.position = posi;
     this.n = n;
     this.size = size;
@@ -10,9 +10,9 @@ class Explosion {
     effect.explosions.push(this);
 
     for (let i = 0; i < n; i++) {
-      const particle = this.createParticle(i / n * Math.PI * 2);
+      const particle = this.createParticle(i / n * Math.PI * 2 + Math.random() - 1);
       particle._fls = [
-        new VectorFL(particle.velocity, [posi.x, posi.y], "red", 20),
+        new VectorFL(particle.velocity, [posi.x, posi.y], "cyan", 20),
         new VectorFL(particle.gravity, [posi.x, posi.y], "yellow"),
         new VectorFL(particle.damp, [posi.x, posi.y], "lime", 5),
       ];
@@ -28,7 +28,7 @@ class Explosion {
       position: new Vector(that.position.x, that.position.y),
       size: that.size,
       baseSize: that.size,
-      decayRate: that.size / 200,
+      decayRate: that.size / 50,
       color: that.color,
       velocity: new Vector(speed * Math.cos(i), speed * Math.sin(i)),
       parent: that,
@@ -58,10 +58,11 @@ class Explosion {
         const G = 1 / 2;
         const ms = 2*this.mass;
         const r = this.parent.effect.cnv.height - this.position.y;
+        const R = this.parent.effect.cnv.height / 2;
         
-        this.gravity.y = G * ms * this.mass / r ** 2;
+        this.gravity.y = G * ms * this.mass / (r + R) ** 2;
         
-        const b = 1.5;
+        const b = 5;
         this.damp.x = -b*this.velocity.x;
         this.damp.y = -b*this.velocity.y;
         
@@ -87,13 +88,13 @@ class Explosion {
         const ctx = that.effect.ctx;
 
         this._fls.forEach(fl => fl.remove());
-        // ctx.beginPath();
-        // ctx.arc(this.position.x, this.position.y, this.baseSize*2, 0, Math.PI * 2);
-        // ctx.fillStyle = "#fff";
-        // ctx.fill();
         that.particles.splice(i, 1);
       }
     }
+  }
+  
+  remove() {
+    this.particles.forEach(p => p.remove());
   }
 
   update(ctx) {

@@ -20,12 +20,22 @@ class Explosion {
     }
   }
   
+  // static COLORS = [
+  //   // warm
+  //     "#FF0000",
+  //     "#FFA500",
+  //     "#FFFF00",
+  //     "#FFFFFF",
+  //     "#00FFFF"
+  //   ]
+  
   static COLORS = [
-      "#FF0000",
-      "#FFA500",
-      "#FFFF00",
-      "#FFFFFF",
-      "#00FFFF"
+      // cool
+      "#ADD8E6",
+      "#00FFFF",
+      "#40E0D0",
+      "#0000FF",
+      "#2E8B57"
     ]
 
   createParticle(i) {

@@ -97,7 +97,8 @@ class Particle {
     const bullet = new Bullet(
       this.position.copy(),
       new Vector(x, y).addBy(this.position.copy().scale(-1)).setMag(10),
-      "#FFA500"
+      //"#FFA500"
+      "cyan"
     );
     bullet.parent = this;
     this.bullets.push(bullet);
@@ -175,7 +176,7 @@ class Bullet {
     const i = this.parent.bullets.findIndex(b => b === this);
     this.parent.bullets.splice(i, 1);
     
-    new Explosion(this.position.copy(), 10, this.parent.system)
+    new Explosion(this.position.copy(), 5, this.parent.system)
     
     this._fls.forEach(fl => fl.remove());
   }

@@ -67,6 +67,9 @@ class Particle {
       .assign(extForces.reduce((a, b) => a.add(b), new Vector()).scale(1/this.mass));
 
     this.position.addBy(this.velocity);
+    this.position.x = Math.max(Math.min(this.position.x, this.system.cnv.width - this.size), this.size);
+    this.position.y = Math.max(Math.min(this.position.y, this.system.cnv.height - this.size), this.size);
+
     this.velocity.addBy(this.acceleration)
         // .cap(Particle.MAX_VELOCITY);
     this._updateVectorFLs();
@@ -167,7 +170,7 @@ class Bullet {
 
     this.velocity.addBy(this.acceleration);
     this.position.addBy(this.velocity);
-
+    
     this._updateVectorFLs();
     this.draw(ctx);
   }
